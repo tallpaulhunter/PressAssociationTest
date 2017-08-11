@@ -1,62 +1,54 @@
 Feature: Test Something
 
-  Scenario Outline: Retrieve details of all songs
+  Scenario: Retrieve details of all songs
     When I request a list of songs
-    Then response code is <response code>
+    Then response code is 200
     And list of all songs is returned
-    And song id is <id>
-    And song Artist is <artist>
-    And song Title <title>
-    And song V value is <v>
-    And song publish date is <publish date>
-    And song date created is <date created>
+    | id                       | artist     | song        | publish date             | v | date created             |
+    | 598b088d59bb170011e83424 | Lady Gaga  | Poker face  | 2017-09-01T00:00:00.000Z | 0 | 2017-08-09T13:05:17.120Z |
+    | 598b0db359bb170011e83425 | Lady Gaga  | Poker face  | 2017-09-01T00:00:00.000Z | 0 | 2017-08-09T13:27:15.332Z |
+    | 598b12bd59bb170011e83426 | Lady Gaga  | Poker face  | 2017-09-01T00:00:00.000Z | 0 | 2017-08-09T13:48:45.541Z |
+    | 598b133d59bb170011e83427 | Lady Gaga  | Poker face  | 2017-09-01T00:00:00.000Z | 0 | 2017-08-09T13:50:53.466Z |
 
-    Examples:
-      |response code|id                      |artist    |title      |v|publish date            |date created            |
-      |200          |596cac389f0525001db52244|Ed Sheeran|Galway Girl|0|2013-02-01T00:00:00.000Z|2017-07-17T12:23:20.639Z|
-      |200          |596cbda86ed7c10011a68b24|Lady Gaga |Poker face |0|2017-09-01T00:00:00.000Z|2017-07-17T13:37:44.559Z|
-      |200          |596cc3b16ed7c10011a68b26|Ed Sheeran|Galway Girl|0|2013-02-01T00:00:00.000Z|2017-07-17T14:03:29.649Z|
 
-  Scenario Outline: Retrieve details on a single song
+  Scenario Outline: Retrieve details of a single song
     When I request details for a song with <id>
-    Then response code is <response code>
-    And only details of one song are returned
-    And song id is <id>
-    And song Artist is <artist>
-    And song Title <title>
-    And song V value is <v>
-    And song publish date is <publish date>
-    And song date created is <date created>
+    Then response code is 200
+    And details of 1 song are returned
+    And list of all songs is returned
+    | id                       | artist     | song        | publish date             | v | date created             |
+    | 598b088d59bb170011e83424 | Lady Gaga  | Poker face  | 2017-09-01T00:00:00.000Z | 0 | 2017-08-09T13:05:17.120Z |
 
     Examples:
-      |response code|id                      |artist    |title      |v|publish date            |date created            |
-      |200          |596cbda86ed7c10011a68b24|Lady Gaga |Poker face |0|2017-09-01T00:00:00.000Z|2017-07-17T13:37:44.559Z|
-      |200          |596cc3b16ed7c10011a68b26|Ed Sheeran|Galway Girl|0|2013-02-01T00:00:00.000Z|2017-07-17T14:03:29.649Z|
+      | id                       |
+      | 598b088d59bb170011e83424 |
 
   Scenario Outline: Post a new song
-    #Given new song Artist is <artist>
-    #And new song Title <title>
-    #And new song publish date is <publish date>
-    When I post a new song
-    Then response code is <response code>
-    And only details of one song are returned
-    And song V value is <v>
-    And song Title <title>
-    And song Artist is <artist>
-    And song publish date is <publish date>
-    And song id is <id>
-    And song date created is <date created>
+    When i post a new song with artist <artist>, song <song>, and publish date <publish date>
+    Then response code is 201
+    And details of 1 song are returned
+    And v value is 0
+    And song value is <song>
+    And artist value is <artist>
+    And publishDate value is <publish date>
+    And _id value is not blank
+    And date_created value is today
 
     Examples:
-      |response code|id                      |artist    |title      |v|publish date            |date created            |
-      |201          |596cabbe9f0525001db52242|Lady Gaga |Poker face |0|2017-09-01T00:00:00.000Z|2017-07-17T12:21:18.580Z|
+      | artist     | song        | publish date |
+      | Ed Sheeran | Galway Girl | 2017-09-01   |
 
   Scenario Outline: Update a video
-    When I post an update to an existing song
+    When I post an update to an existing song with Id <id>
     Then response code is <response code>
-    And Response body will be Not implemented
+    And response body will be Not implemented
     Examples:
-      | response code  |
-      | 501            |
+      | id                       | response code  |
+      | 598b088d59bb170011e83427 | 501            |
 
+  #always run after "Post a new song" and delete the created song (highest Id)
   Scenario: Delete a video
+    When I delete a video
+    Then response code is 204
+    And response body will be N/A
+
